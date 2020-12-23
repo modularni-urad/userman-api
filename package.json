@@ -1,0 +1,40 @@
+{
+  "name": "userman-api",
+  "version": "1.0.0",
+  "description": "API pro management uzivatelu",
+  "main": "server.js",
+  "scripts": {
+    "start": "node -r esm -r dotenv/config server.js",
+    "startdbg": "node -r esm -r dotenv/config --inspect-brk server.js",
+    "test": "mocha -r esm -r ./test/utils/env --exit './test/main.js'",
+    "testdbg": "mocha -r esm -r ./test/utils/env --inspect-brk './test/main.js'"
+  },
+  "author": "Vaclav Klecanda <vencax77@gmail.com> (http://vxk.cz)",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "dotenv": "^6.0.0",
+    "esm": "^3.2.25",
+    "express": "^4.16.2",
+    "knex-filter-loopback": "^0.3.0",
+    "knex-paginate": "^1.2.1",
+    "modularni-urad-utils": "1.0.0",
+    "morgan": "^1.9.0",
+    "parse-data-url": "^3.0.0",
+    "underscore": "^1.9.1"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^4.2.0",
+    "deepcopy": "^2.0.0",
+    "expect": "^1.20.2",
+    "jsdom": "^9.8.0",
+    "knex-hooks": "0.0.9",
+    "mocha": "^8.2.0",
+    "sqlite3": "^4.0.4"
+  },
+  "engines": {
+    "node": ">=12"
+  }
+}
