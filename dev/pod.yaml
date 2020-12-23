@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: userman
+  labels:
+    app: userman
+spec:
+  containers:
+  - name: userman
+    image: modularni-urad/userman
+    imagePullPolicy: Never
+    env:
+    - name: DATABASE_URL
+      value: postgres://username:secret@localhost:5432/moje_db
+    - name: SESSION_SECRET
+      value: XXX
+    - name: AUTH_API
+      value: dd
+    - name: MOCKUSER
+      value: '{"id":1133,"groups":["user_admin"]}'
+    - name: REDIS_URL
+      value: redis://redis:6379
+    - name: HOST
+      value: 0.0.0.0

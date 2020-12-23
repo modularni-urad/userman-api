@@ -4,8 +4,8 @@
   "description": "API pro management uzivatelu",
   "main": "server.js",
   "scripts": {
-    "start": "node -r esm -r dotenv/config server.js",
-    "startdbg": "node -r esm -r dotenv/config --inspect-brk server.js",
+    "start": "node -r esm server.js",
+    "startdbg": "node -r esm --inspect-brk server.js",
     "test": "mocha -r esm -r ./test/utils/env --exit './test/main.js'",
     "testdbg": "mocha -r esm -r ./test/utils/env --inspect-brk './test/main.js'"
   },
@@ -14,7 +14,6 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
-    "dotenv": "^6.0.0",
     "esm": "^3.2.25",
     "express": "^4.16.2",
     "knex-filter-loopback": "^0.3.0",
