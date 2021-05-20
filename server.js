@@ -3,7 +3,7 @@ import path from 'path'
 import bodyParser from 'body-parser'
 import { attachPaginate } from 'knex-paginate'
 import initErrorHandlers from 'modularni-urad-utils/error_handlers'
-import { initAuth } from 'modularni-urad-utils/auth'
+import initAuth from 'modularni-urad-utils/auth'
 import initDB from 'modularni-urad-utils/db'
 import initRoutes from './api/users_routes'
 
