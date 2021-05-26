@@ -21,6 +21,15 @@ export default (ctx) => {
       }).catch(next)
     })
 
+  app.post('/login',
+    _loadOrgID,
+    JSONBodyParser,
+    (req, res, next) => {
+      users.login(req.body, req.orgid, knex)
+        .then(found => { res.status(200).json(found) })
+        .catch(next)
+    })
+
   app.post('/',
     _loadOrgID,
     auth.requireMembership(ROLE.ADMIN),

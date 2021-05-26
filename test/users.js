@@ -50,5 +50,18 @@ module.exports = (g) => {
       res.body.data[0].username.should.equal(p1.username)
       res.body.pagination.currentPage = 1
     })
+
+    it('shall login pok1', async () => {
+      const res = await r.post('/login').send(p1)
+      res.status.should.equal(200)
+      res.body.username.should.equal(p1.username)
+    })
+
+    it('must not login pok1 with wrong credentials', async () => {
+      const wrongKredec = Object.assign({}, p1, { password: 'ee' })
+      const res = await r.post('/login').send(wrongKredec)
+      res.status.should.equal(400)
+      // res.body.username.should.equal(p1.username)
+    })
   })
 }

@@ -3,7 +3,7 @@ import { whereFilter } from 'knex-filter-loopback'
 import _ from 'underscore'
 import { TNAMES, createPwdHash } from '../consts'
 
-export default { create, update, list }
+export default { create, update, list, login }
 
 function list (query, knex) {
   const perPage = Number(query.perPage) || 10
@@ -14,6 +14,15 @@ function list (query, knex) {
   qb = fields ? qb.select(fields) : qb
   qb = sort ? qb.orderBy(sort[0], sort[1]) : qb
   return currentPage ? qb.paginate({ perPage, currentPage }) : qb
+}
+
+async function login (data, orgid, knex) {
+  const errMesage = 'invalid credentials'
+  const u = await knex(TNAMES.USERS).where({orgid, username: data.username})
+  if (u.length === 0) throw new Error(errMesage)
+  const pwd = createPwdHash(data.password)
+  if (u[0].password !== pwd) throw new Error(errMesage)
+  return _.omit(u[0], 'password', 'status')
 }
 
 const editables = [
