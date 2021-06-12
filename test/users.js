@@ -43,12 +43,19 @@ module.exports = (g) => {
       res.body[0].username.should.equal(p1.username)
     })
 
+    it('shall update the pok1', async () => {
+      const change = { status: 2 }
+      const res = await r.put('/1/').send(change).set('Authorization', 'Bearer f')
+      res.status.should.equal(200)
+    })
+
     it('shall get the pok1 with pagination', async () => {
       const res = await r.get('/?currentPage=1&perPage=10&sort=id:asc')
             .set('Authorization', 'Bearer f')
       res.status.should.equal(200)
       res.body.data.should.have.lengthOf(1)
       res.body.data[0].username.should.equal(p1.username)
+      res.body.data[0].status.should.equal(2)
       res.body.pagination.currentPage = 1
     })
 

@@ -39,7 +39,7 @@ export default (ctx) => {
     })
 
   app.put('/:id',
-    _loadOrgID,
+    _loadOrgID, required,
     (req, res, next) => {
       isMember(req, ROLE.ADMIN) || // i am admin
       getUID(req).toString() === req.params.id // or i update myself
