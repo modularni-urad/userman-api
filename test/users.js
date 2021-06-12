@@ -20,8 +20,8 @@ module.exports = (g) => {
     // })
 
     it('shall create a new item', async () => {
-      g.usergroups = ['user_admin']
-      const res = await r.post('/').send(p1)
+      g.mockUser.groups = ['user_admin']
+      const res = await r.post('/').send(p1).set('Authorization', 'Bearer f')
       res.status.should.equal(201)
     })
 
@@ -37,7 +37,7 @@ module.exports = (g) => {
     // })
 
     it('shall get the pok1', async () => {
-      const res = await r.get('/')
+      const res = await r.get('/').set('Authorization', 'Bearer f')
       res.status.should.equal(200)
       res.body.should.have.lengthOf(1)
       res.body[0].username.should.equal(p1.username)
@@ -45,6 +45,7 @@ module.exports = (g) => {
 
     it('shall get the pok1 with pagination', async () => {
       const res = await r.get('/?currentPage=1&perPage=10&sort=id:asc')
+            .set('Authorization', 'Bearer f')
       res.status.should.equal(200)
       res.body.data.should.have.lengthOf(1)
       res.body.data[0].username.should.equal(p1.username)

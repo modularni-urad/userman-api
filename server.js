@@ -15,7 +15,7 @@ export async function init (mocks = null) {
     : await initDB(migrationsDir)
   attachPaginate()
   const app = express()
-  const auth = mocks ? mocks.auth : { required, requireMembership, isMember, getUID }
+  const auth = { required, requireMembership, isMember, getUID }
   const appContext = { express, knex, auth }
 
   app.use(initRoutes(appContext))
