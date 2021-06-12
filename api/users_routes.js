@@ -7,7 +7,7 @@ const D2O = JSON.parse(process.env.DOMAIN_TO_ORGID)
 
 export default (ctx) => {
   const { knex, auth, express } = ctx
-  const { required, requireMembership } = auth
+  const { required, requireMembership, isMember, getUID } = auth
   const reqireAdmin = requireMembership(ROLE.ADMIN)
   const app = express()
   const bodyParser = express.json()
@@ -41,8 +41,8 @@ export default (ctx) => {
   app.put('/:id',
     _loadOrgID,
     (req, res, next) => {
-      auth.isMember(req, ROLE.ADMIN) || // i am admin
-      auth.getUID(req).toString() === req.params.id // or i update myself
+      isMember(req, ROLE.ADMIN) || // i am admin
+      getUID(req).toString() === req.params.id // or i update myself
         ? next() : next(401)
     },
     bodyParser,
