@@ -61,7 +61,7 @@ module.exports = (g) => {
       const wrongKredec = Object.assign({}, p1, { password: 'ee' })
       const res = await r.post('/login').send(wrongKredec)
       res.status.should.equal(400)
-      // res.body.username.should.equal(p1.username)
+      res.text.should.equal('invalid credentials')
     })
   })
 }

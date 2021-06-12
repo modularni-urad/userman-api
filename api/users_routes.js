@@ -6,12 +6,11 @@ const D2O = JSON.parse(process.env.DOMAIN_TO_ORGID)
 
 export default (ctx) => {
   const { knex, auth, JSONBodyParser } = ctx
+  const { required, requireMembership } = auth
+  const reqireAdmin = requireMembership(ROLE.ADMIN)
   const app = ctx.express()
 
-  app.get('/', 
-    _loadOrgID,
-    auth.requireMembership(ROLE.ADMIN),
-    (req, res, next) => {
+  app.get('/', _loadOrgID, required, reqireAdmin, (req, res, next) => {
       const filter = JSON.parse(_.get(req, 'query.filter', '{}'))
       const implicitFilter = { orgid: req.orgid }
       Object.assign(filter, implicitFilter)
@@ -21,18 +20,13 @@ export default (ctx) => {
       }).catch(next)
     })
 
-  app.post('/login',
-    _loadOrgID,
-    JSONBodyParser,
-    (req, res, next) => {
-      users.login(req.body, req.orgid, knex)
-        .then(found => { res.status(200).json(found) })
-        .catch(next)
-    })
+  app.post('/login', _loadOrgID, JSONBodyParser, (req, res, next) => {
+    users.login(req.body, req.orgid, knex)
+      .then(found => { res.status(200).json(found) })
+      .catch(next)
+  })
 
-  app.post('/',
-    _loadOrgID,
-    auth.requireMembership(ROLE.ADMIN),
+  app.post('/', _loadOrgID, required, reqireAdmin,
     JSONBodyParser,
     (req, res, next) => {
       users.create(req.body, req.orgid, knex)
