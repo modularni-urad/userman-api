@@ -1,6 +1,5 @@
 import express from 'express'
 import path from 'path'
-import bodyParser from 'body-parser'
 import { attachPaginate } from 'knex-paginate'
 import initErrorHandlers from 'modularni-urad-utils/error_handlers'
 import { required, requireMembership } from 'modularni-urad-utils/auth'
@@ -14,9 +13,8 @@ export async function init (mocks = null) {
     : await initDB(migrationsDir)
   attachPaginate()
   const app = express()
-  const JSONBodyParser = bodyParser.json()
   const auth = mocks ? mocks.auth : { required, requireMembership }
-  const appContext = { express, knex, auth, JSONBodyParser }
+  const appContext = { express, knex, auth }
 
   app.use(initRoutes(appContext))
 

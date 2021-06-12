@@ -5,10 +5,11 @@ import { ROLE } from '../consts'
 const D2O = JSON.parse(process.env.DOMAIN_TO_ORGID)
 
 export default (ctx) => {
-  const { knex, auth, JSONBodyParser } = ctx
+  const { knex, auth, express } = ctx
   const { required, requireMembership } = auth
   const reqireAdmin = requireMembership(ROLE.ADMIN)
-  const app = ctx.express()
+  const app = express()
+  const bodyParser = express.json()
 
   app.get('/', _loadOrgID, required, reqireAdmin, (req, res, next) => {
       const filter = JSON.parse(_.get(req, 'query.filter', '{}'))
@@ -20,14 +21,14 @@ export default (ctx) => {
       }).catch(next)
     })
 
-  app.post('/login', _loadOrgID, JSONBodyParser, (req, res, next) => {
+  app.post('/login', _loadOrgID, bodyParser, (req, res, next) => {
     users.login(req.body, req.orgid, knex)
       .then(found => { res.status(200).json(found) })
       .catch(next)
   })
 
   app.post('/', _loadOrgID, required, reqireAdmin,
-    JSONBodyParser,
+    bodyParser,
     (req, res, next) => {
       users.create(req.body, req.orgid, knex)
         .then(created => { res.status(201).json(created[0]) })
@@ -41,7 +42,7 @@ export default (ctx) => {
       auth.getUID(req).toString() === req.params.id // or i update myself
         ? next() : next(401)
     },
-    JSONBodyParser,
+    bodyParser,
     (req, res, next) => {
       users.update(req.params.id, req.body, knex)
         .then(updated => { res.json(updated[0]) })
