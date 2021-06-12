@@ -1,5 +1,6 @@
 import _ from 'underscore'
 import users from './users'
+import formConfig from './formconfig'
 import { ROLE } from '../consts'
 
 const D2O = JSON.parse(process.env.DOMAIN_TO_ORGID)
@@ -10,6 +11,8 @@ export default (ctx) => {
   const reqireAdmin = requireMembership(ROLE.ADMIN)
   const app = express()
   const bodyParser = express.json()
+
+  app.get('/formconfig.json', (req, res, next) => res.json(formConfig))
 
   app.get('/', _loadOrgID, required, reqireAdmin, (req, res, next) => {
       const filter = JSON.parse(_.get(req, 'query.filter', '{}'))
