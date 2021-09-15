@@ -3,7 +3,7 @@ import { whereFilter } from 'knex-filter-loopback'
 import _ from 'underscore'
 import { TNAMES, createPwdHash } from '../consts'
 
-export default { create, update, list, login }
+export default { create, update, list, login, info, search }
 
 function list (query, knex) {
   const perPage = Number(query.perPage) || 10
@@ -23,6 +23,20 @@ async function login (data, orgid, knex) {
   const pwd = createPwdHash(data.password)
   if (u[0].password !== pwd) throw new Error(errMesage)
   return _.omit(u[0], 'password', 'status')
+}
+
+const publicParams = [ 'id', 'username', 'name', 'email' ]
+
+async function info (uid, orgid, knex) {
+  const cond = { id: uid, orgid }
+  return knex(TNAMES.USERS).where(cond).select(publicParams).first()
+}
+
+async function search (query, orgid, knex) {
+  return knex(TNAMES.USERS)
+    .where('username', 'like', `%${query}%`)
+    .orWhere('name', 'like', `%${query}%`)
+    .select(publicParams)
 }
 
 const editables = [

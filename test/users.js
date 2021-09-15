@@ -41,6 +41,7 @@ module.exports = (g) => {
       res.status.should.equal(200)
       res.body.should.have.lengthOf(1)
       res.body[0].username.should.equal(p1.username)
+      p1.id = res.body[0].id
     })
 
     it('shall update the pok1', async () => {
@@ -70,6 +71,18 @@ module.exports = (g) => {
       const res = await r.post('/login').send(wrongKredec)
       res.status.should.equal(400)
       res.text.should.equal('invalid credentials')
+    })
+
+    it('shall return user info', async () => {
+      const res = await r.get('/info/' + p1.id)
+      res.status.should.equal(200)
+      res.body.username.should.equal(p1.username)
+    })
+
+    it('shall search users', async () => {
+      const res = await r.get('/search/?query=and')
+      res.status.should.equal(200)
+      res.body.should.have.lengthOf(1)
     })
   })
 }

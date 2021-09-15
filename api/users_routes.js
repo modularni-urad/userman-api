@@ -29,6 +29,16 @@ export default (ctx) => {
       .then(found => { res.status(200).json(found) })
       .catch(next)
   })
+  app.get('/info/:uid', _loadOrgID, (req, res, next) => {
+    users.info(req.params.uid, req.orgid, knex).then(found => { 
+      res.status(200).json(found) 
+    }).catch(next)
+  })
+  app.get('/search', _loadOrgID, (req, res, next) => {
+    users.search(req.query.query, req.orgid, knex).then(found => { 
+      res.status(200).json(found) 
+    }).catch(next)
+  })
 
   app.post('/', _loadOrgID, required, reqireAdmin,
     bodyParser,
