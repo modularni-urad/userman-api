@@ -34,8 +34,11 @@ async function info (uid, orgid, knex) {
 
 async function search (query, orgid, knex) {
   return knex(TNAMES.USERS)
-    .where('username', 'like', `%${query}%`)
-    .orWhere('name', 'like', `%${query}%`)
+    .where('orgid', '=', orgid)
+    .where(function() {
+      this.where('username', 'like', `%${query}%`)
+          .orWhere('name', 'like', `%${query}%`)
+    })
     .select(publicParams)
 }
 
