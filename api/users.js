@@ -1,5 +1,6 @@
 
 import { whereFilter } from 'knex-filter-loopback'
+import { APIError } from 'modularni-urad-utils'
 import _ from 'underscore'
 import { TNAMES, createPwdHash } from '../consts'
 
@@ -19,9 +20,9 @@ function list (query, knex) {
 async function login (data, orgid, knex) {
   const errMesage = 'invalid credentials'
   const u = await knex(TNAMES.USERS).where({orgid, username: data.username})
-  if (u.length === 0) throw new Error(errMesage)
+  if (u.length === 0) throw new APIError(401, errMesage)
   const pwd = createPwdHash(data.password)
-  if (u[0].password !== pwd) throw new Error(errMesage)
+  if (u[0].password !== pwd) throw new APIError(401, errMesage)
   return _.omit(u[0], 'password', 'status')
 }
 
@@ -48,7 +49,7 @@ const editables = [
 
 function create (data, orgid, knex) {
   if (!data.password || !data.username) {
-    throw new Error('invalid data')
+    throw new APIError(400, 'invalid data')
   }
   data = _.pick(data, editables)
   Object.assign(data, { password: createPwdHash(data.password), orgid })

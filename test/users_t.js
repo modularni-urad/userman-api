@@ -5,7 +5,7 @@ chai.should()
 
 module.exports = (g) => {
   //
-  const r = chai.request(g.baseurl)
+  const r = chai.request(g.baseurl + '/api.domain1.cz')
 
   const p1 = {
     username: 'gandalf',
@@ -69,7 +69,7 @@ module.exports = (g) => {
     it('must not login pok1 with wrong credentials', async () => {
       const wrongKredec = Object.assign({}, p1, { password: 'ee' })
       const res = await r.post('/login').send(wrongKredec)
-      res.status.should.equal(400)
+      res.status.should.equal(401)
       res.text.should.equal('invalid credentials')
     })
 

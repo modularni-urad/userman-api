@@ -6,22 +6,25 @@
   "scripts": {
     "start": "node -r esm server.js",
     "startdbg": "node -r esm --inspect-brk server.js",
-    "test": "mocha -r esm -r ./test/utils/env --exit './test/main.js'",
-    "testdbg": "mocha -r esm -r ./test/utils/env --inspect-brk './test/main.js'"
+    "test": "mocha -r esm --exit './test/main.js'",
+    "testdbg": "mocha -r esm --inspect './test/main.js'"
   },
   "author": "Vaclav Klecanda <vencax77@gmail.com> (http://vxk.cz)",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.21.1",
+    "chokidar": "^3.5.2",
+    "cors": "^2.8.5",
     "esm": "^3.2.25",
     "express": "^4.16.2",
     "knex": "^0.95.6",
     "knex-filter-loopback": "^0.3.0",
     "knex-paginate": "^1.2.1",
-    "modularni-urad-utils": "1.2.0",
+    "modularni-urad-utils": "^1.4.0",
     "morgan": "^1.9.0",
     "pg": "^8.6.0",
-    "underscore": "^1.13.1"
+    "underscore": "^1.13.1",
+    "yaml": "^1.10.2"
   },
   "devDependencies": {
     "chai": "^4.1.2",
