@@ -5,17 +5,14 @@ const Knex = require('knex')
 // const rand = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 15)
 // process.env.DATABASE_URL = rand + 'test.sqlite'
 
-export default function initDB (migrationsDir) {
+export default function initDB () {
   const opts = {
     client: 'sqlite3',
     connection: {
       filename: process.env.DATABASE_URL
     },
     useNullAsDefault: true,
-    debug: true,
-    migrations: {
-      directory: migrationsDir
-    }
+    debug: true
   }
   const knex = Knex(opts)
   // knexHooks(knex)
@@ -25,7 +22,5 @@ export default function initDB (migrationsDir) {
   //   params.result[0] = data
   // })
 
-  return knex.migrate.latest().then(() => {
-    return knex
-  })
+  return knex
 }

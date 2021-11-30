@@ -1,37 +1,23 @@
-import express from 'express'
-import cors from 'cors'
 import path from 'path'
-import { attachPaginate } from 'knex-paginate'
-import {
-  auth,
-  initDB,
-  initErrorHandlers,
-  initConfigManager,
-  CORSconfigCallback,
-  createLoadOrgConfigMW
-} from 'modularni-urad-utils'
-import initRoutes from './api/users_routes'
+import initApi from './api/routes'
 
-export default async function init (mocks = null) {
-  const migrationsDir = path.join(__dirname, 'migrations')
-  const knex = mocks
-    ? await mocks.dbinit(migrationsDir)
-    : await initDB(migrationsDir)
-  attachPaginate()
-  await initConfigManager(process.env.CONFIG_FOLDER)
-
-  const app = express()
-  process.env.NODE_ENV !== 'test' && app.use(cors(CORSconfigCallback))
-
-  const ctx = {
-    express, knex, auth
+export async function migrateDB (knex, schemas = null) {
+  const opts = {
+    directory: path.join(__dirname, 'migrations')
   }
-  const api = initRoutes(ctx)
-
-  app.use('/:domain/', createLoadOrgConfigMW(req => {
-    return req.params.domain
-  }), api)
-
-  initErrorHandlers(app) // ERROR HANDLING
-  return app
+  async function migrate2schema(schemaName) {
+    console.log(`----- userman: migration to schema ${schemaName} start ------`)
+    await knex.raw(`CREATE SCHEMA IF NOT EXISTS "${schemaName}"`)
+    const o = Object.assign({}, opts, { schemaName })
+    process.env.CUSTOM_MIGRATION_SCHEMA = schemaName
+    await knex.migrate.latest(o)
+    console.log(`----- userman: migration to schema ${schemaName} ended ------`)
+  }
+  return schemas
+    ? schemas.reduce((p, schema) => {
+        return p.then(() => migrate2schema(schema))
+      }, Promise.resolve())
+    : knex.migrate.latest(opts)
 }
+
+export const init = initApi

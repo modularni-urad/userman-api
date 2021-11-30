@@ -12,3 +12,9 @@ export function createPwdHash (pwd) {
     ? eval(process.env.HASH_FUNC.replace('<PWD>', pwd))
     : require('crypto').createHash('sha256').update(pwd).digest('base64')
 }
+
+export function getQB (knex, tablename, schema) {
+  return schema
+    ? knex(knex.ref(tablename).withSchema(schema))
+    : knex(tablename)
+}

@@ -1,11 +1,8 @@
 /* global describe it */
-const chai = require('chai')
-chai.should()
-// import _ from 'underscore'
 
 module.exports = (g) => {
   //
-  const r = chai.request(g.baseurl + '/api.domain1.cz')
+  const r = g.chai.request(g.baseurl)
 
   const p1 = {
     username: 'gandalf',
@@ -14,10 +11,11 @@ module.exports = (g) => {
   }
 
   return describe('users', () => {
-    // it('must not create a new item wihout approp group', async () => {
-    //   const res = await r.post('/').send(p1)
-    //   res.status.should.equal(403)
-    // })
+    it('must not create a new item wihout approp group', async () => {
+      g.mockUser.groups = ['standardusers']
+      const res = await r.post('/').send(p1).set('Authorization', 'Bearer f')
+      res.status.should.equal(401)
+    })
 
     it('shall create a new item', async () => {
       g.mockUser.groups = ['user_admin']
@@ -25,16 +23,10 @@ module.exports = (g) => {
       res.status.should.equal(201)
     })
 
-    // it('shall update the item pok1', () => {
-    //   const change = {
-    //     name: 'pok1changed'
-    //   }
-    //   return r.put(`/tasks/${p.id}`).send(change)
-    //   .set('Authorization', g.gimliToken)
-    //   .then(res => {
-    //     res.should.have.status(200)
-    //   })
-    // })
+    it('mustnot get the pok1 without auth', async () => {
+      const res = await r.get('/')
+      res.status.should.equal(401)
+    })
 
     it('shall get the pok1', async () => {
       const res = await r.get('/').set('Authorization', 'Bearer f')
@@ -46,7 +38,7 @@ module.exports = (g) => {
 
     it('shall update the pok1', async () => {
       const change = { status: 2 }
-      const res = await r.put('/1/').send(change).set('Authorization', 'Bearer f')
+      const res = await r.put(`/${p1.id}/`).send(change).set('Authorization', 'Bearer f')
       res.status.should.equal(200)
     })
 
