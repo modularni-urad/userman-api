@@ -4,7 +4,7 @@ export const TNAMES = {
 }
 
 export const ROLE = {
-  ADMIN: 'user_admin'
+  ADMIN: 'user_admins' || process.env.USER_ADMIN_GROUP_SLUG
 }
 
 export function createPwdHash (pwd) {
