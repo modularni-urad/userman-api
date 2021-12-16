@@ -1,4 +1,5 @@
-import { TNAMES, createPwdHash, getQB } from '../consts'
+import { randomBytes } from 'crypto'
+import { TNAMES, ROLE, createPwdHash, getQB } from '../consts'
 
 const conf = {
   tablename: TNAMES.USERS,
@@ -6,7 +7,7 @@ const conf = {
 }
 
 export default (ctx) => {
-  const { knex, ErrorClass } = ctx
+  const { knex, ErrorClass, auth } = ctx
   const _ = ctx.require('underscore')
   const entityMWBase = ctx.require('entity-api-base').default
   const MW = entityMWBase(conf, knex, ErrorClass)
@@ -38,9 +39,10 @@ export default (ctx) => {
       return MW.list(query, schema)
     },
     create: function (data, schema) {
-      if (!data.password || !data.username) {
+      if (!data.username) {
         throw new ErrorClass(400, 'invalid data')
       }
+      data.password = data.password || randomBytes(16).toString('hex')
       Object.assign(data, { password: createPwdHash(data.password) })
       return MW.create(data, schema)
     },
@@ -49,6 +51,17 @@ export default (ctx) => {
         data.password = createPwdHash(data.password)
       }
       return MW.update(id, data, schema)
+    },
+    canIUpdate: function (req, res, next) {
+      const u = req.user !== null && !_.isUndefined(req.user)
+      u && (
+        auth.isMember(req, ROLE.ADMIN) // i am admin
+        || auth.getUID(req).toString() === req.params.id // or i update myself
+      ) ? next() : next(new ErrorClass(403, 'you cannot update'))
+    },
+    updatePwd: async function (id, data, schema) {
+      data.password = createPwdHash(data.password)
+      return MW.update(id, { password: data.password }, schema)
     }
   }
 }

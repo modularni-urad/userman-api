@@ -4,7 +4,7 @@ import { ROLE } from '../consts'
 
 export default (ctx) => {
   const { auth, express, bodyParser } = ctx
-  const { session, required, requireMembership, isMember, getUID } = auth
+  const { session, requireMembership } = auth
   const reqireAdmin = requireMembership(ROLE.ADMIN)
   const api = express()
   const MW = MWarez(ctx)
@@ -39,18 +39,17 @@ export default (ctx) => {
       .catch(next)
   })
 
-  api.put('/:id', session,
-    (req, res, next) => {
-      isMember(req, ROLE.ADMIN) || // i am admin
-      getUID(req).toString() === req.params.id // or i update myself
-        ? next() : next(401)
-    },
-    bodyParser,
-    (req, res, next) => {
-      MW.update(req.params.id, req.body, req.tenantid)
-        .then(updated => { res.json(updated[0]) })
-        .catch(next)
-    })
+  api.put('/:id', session, MW.canIUpdate, bodyParser, (req, res, next) => {
+    MW.update(req.params.id, req.body, req.tenantid)
+      .then(updated => { res.json(updated[0]) })
+      .catch(next)
+  })
+
+  api.put('/chpasswd/:id', session, MW.canIUpdate, bodyParser, (req, res, next) => {
+    MW.updatePwd(req.params.id, req.body, req.tenantid)
+      .then(updated => { res.json(updated[0]) })
+      .catch(next)
+  })
 
   return api
 }

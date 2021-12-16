@@ -6,8 +6,7 @@ module.exports = (g) => {
 
   const p1 = {
     username: 'gandalf',
-    name: 'gandalf the grey',
-    password: 'secretWhisper'
+    name: 'gandalf the grey'
   }
 
   return describe('users', () => {
@@ -18,7 +17,7 @@ module.exports = (g) => {
     })
 
     it('shall create a new item', async () => {
-      g.mockUser.groups = ['user_admin']
+      g.mockUser.groups = ['user_admins']
       const res = await r.post('/').send(p1).set('Authorization', 'Bearer f')
       res.status.should.equal(201)
     })
@@ -52,6 +51,14 @@ module.exports = (g) => {
       res.body.pagination.currentPage = 1
     })
 
+    it('shall set password', async () => {
+      const p = 'secretWhisper'
+      const res = await r.put(`/chpasswd/${p1.id}`).send({password: p})
+        .set('Authorization', 'Bearer f')
+      res.status.should.equal(200)
+      p1.password = p
+    })
+
     it('shall login pok1', async () => {
       const res = await r.post('/login').send(p1)
       res.status.should.equal(200)
@@ -75,6 +82,24 @@ module.exports = (g) => {
       const res = await r.get('/search/?query=and')
       res.status.should.equal(200)
       res.body.should.have.lengthOf(1)
+    })
+
+    it('shall set my password', async () => {
+      g.mockUser.groups = ['standardusers']
+      g.mockUser.id = p1.id
+      const p = 'newWhisper'
+      const res = await r.put(`/chpasswd/${p1.id}`).send({password: p})
+        .set('Authorization', 'Bearer f')
+      res.status.should.equal(200)
+      p1.password = p
+    })
+
+    it('mustnot set my password', async () => {
+      g.mockUser.id = 42
+      const p = 'newWhisper'
+      const res = await r.put(`/chpasswd/${p1.id}`).send({password: p})
+        .set('Authorization', 'Bearer f')
+      res.status.should.equal(403)
     })
   })
 }
